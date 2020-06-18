@@ -8,10 +8,10 @@
       </div>
     </nav>
     <div>
-      <h3 id="welcome">Welcome to TRAINSET</h3>
-      <button type="button" class="btn btn-lg btn-outline-danger upload" id="upload" @click="upload">Upload Data</button>
-      <input type="file" id="upload-file" ref="fileInput" class="fileCheck" @change="fileCheck">
-      <a id="sampleCSV" href="/static/sample_trainset.csv" download>sample CSV</a>
+      <h3 id="welcome">Welcome to UCSF TRAINSET</h3>
+      <button type="button" class="btn btn-lg btn-outline-danger upload" id="upload" @click="fileCheck">Subject 7 Daily Step Count</button>
+<!--       <input type="file" id="upload-file" ref="fileInput" class="fileCheck" @change="fileCheck"> -->
+      <!-- <a id="sampleCSV" href="/static/trainset7.csv" download>sample CSV</a> -->
     </div>
     <br>
     <div id="info">
@@ -53,15 +53,22 @@ export default {
         this.$nextTick(function() {this.upload()});
       }
     },
-    upload () {
-      this.$refs.fileInput.click()
+    async loadSubject7File() {
+      let url = "https://ucsf.box.com/shared/static/7bnsdyjbypbjsk9ado1jhf63iez1ao6o.csv";
+      var r;
+      let blob = await fetch(url).then(r => r.blob());
+      return Promise.resolve(blob)
     },
-    fileCheck () {
+    upload () {
+      this.$refs.fileInput.fileCheck()
+    },
+    async fileCheck () {
       window.onerror = (errorMsg, url, lineNumber) => {
         this.error();
       }
-      var fileInput = document.getElementById("upload-file").files.item(0), fileText;
-      console.log(document.getElementById("upload-file").files.item(0))
+
+      var blob = await this.loadSubject7File().then(value => blob = value);
+      var fileInput = blob,fileText;
       var filename;
       var id = 0;
       var reader = new FileReader();
