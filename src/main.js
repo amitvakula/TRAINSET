@@ -8,6 +8,8 @@ import Help from './components/Help'
 import Labeler from './components/Labeler'
 import License from './components/License'
 import FitLoader from "./components/FitLoader"
+import Dropdown from "./components/Dropdown"
+import Button from "./components/Button"
 
 require('expose-loader?$!expose-loader?jQuery!jquery')
 require('jquery-csv')
@@ -21,7 +23,9 @@ const routes = [
 	{ name: 'help', path: '/help', component: Help },
 	{ name: 'license', path: '/license', component: License },
 	{ name: 'fit-data', path: '/fit-data', component: FitLoader },
-	{ name: 'labeler', path: '/labeler', component: Labeler, props: true }
+	{ name: 'labeler', path: '/labeler', component: Labeler, props: true },
+    { name: 'dropdown', path: '/dropdown', component: Dropdown },
+    { name: 'button', path: '/button', component: Button }
 ]
 
 const router = new VueRouter({
