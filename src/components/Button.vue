@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="button-group">
+  <div class="button-group">
+    <div>
         <input type="radio" id="label" value="Sleep" v-model="sleep">
         <label for="one">Sleep</label>
         <br>
@@ -10,7 +10,7 @@
         <span class='result'>Picked: {{ sleep }}</span>
     </div>
       
-    <div class="button-group">
+    <div>
         <input type="radio" id="label" value="Device On" v-model="device">
         <label for="one">Device On</label>
         <br>
@@ -20,7 +20,7 @@
         <span class='result'>Picked: {{ device }}</span>
     </div>
       
-    <div class="button-group">
+    <div>
         <input type="radio" id="label" value="Activity 1" v-model="activity">
         <label for="one">Activity 1</label>
         <br>

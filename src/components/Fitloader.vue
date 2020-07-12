@@ -62,13 +62,13 @@ export default {
       return Promise.resolve(blob)
     },
     async loadSubject7_2015_07 () {
-      let url = "https://berkeley.box.com/shared/static/4sgzf0wf1uf3u70v74wp8jbb7cju1awd.csv";
+      let url = "https://berkeley.box.com/shared/static/g2ssgb6mhp3z9lx6fe2a5rt0l4sucza2.csv";
       var r;
       let blob = await fetch(url).then(r => r.blob());
       return Promise.resolve(blob)
     },
     async loadSubject7_2015_07_20 () {
-      let url = "https://berkeley.box.com/shared/static/4sgzf0wf1uf3u70v74wp8jbb7cju1awd.csv";
+      let url = "https://berkeley.box.com/shared/static/4cr9ewybnqoh7cznxpgxdlus7l8unrrd.csv";
       var r;
       let blob = await fetch(url).then(r => r.blob());
       return Promise.resolve(blob)
