@@ -10,6 +10,7 @@ import License from './components/License'
 import FitLoader from "./components/FitLoader"
 import Dropdown from "./components/Dropdown"
 import Button from "./components/Button"
+import Pandas_js from "./components/Pandas_js"
 
 require('expose-loader?$!expose-loader?jQuery!jquery')
 require('jquery-csv')
@@ -25,7 +26,8 @@ const routes = [
 	{ name: 'fit-data', path: '/fit-data', component: FitLoader },
 	{ name: 'labeler', path: '/labeler', component: Labeler, props: true },
     { name: 'dropdown', path: '/dropdown', component: Dropdown },
-    { name: 'button', path: '/button', component: Button }
+    { name: 'button', path: '/button', component: Button },
+    { name: 'pandas-js', path: '/pandas-js', component: Pandas_js }
 ]
 
 const router = new VueRouter({
