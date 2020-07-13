@@ -11,7 +11,7 @@
       <h3 id="welcome">Welcome to TRAINSET</h3>
       <button type="button" class="btn btn-lg btn-outline-danger upload" id="upload" @click="upload">Upload Data</button>
       <input type="file" id="upload-file" ref="fileInput" class="fileCheck" @change="fileCheck">
-      <a id="sampleCSV" href="/static/sample_trainset.csv" download>sample CSV</a>
+<!--       <a id="sampleCSV" href="/static/sample_trainset.csv" download>sample CSV</a> -->
     </div>
     <br>
     <div id="info">
@@ -54,14 +54,15 @@ export default {
       }
     },
     upload () {
-      this.$refs.fileInput.click()
+      // this.$refs.fileInput.click()
+      this.$refs.fileInput.fileCheck()
     },
     fileCheck () {
       window.onerror = (errorMsg, url, lineNumber) => {
         this.error();
       }
-      var fileInput = document.getElementById("upload-file").files.item(0), fileText;
-      console.log(document.getElementById("upload-file").files.item(0))
+      // var fileInput = document.getElementById("upload-file").files.item(0), fileText;
+      var fileInput = "/Users/harebar/Downloads/trainset7.csv"
       var filename;
       var id = 0;
       var reader = new FileReader();

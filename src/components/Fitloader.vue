@@ -9,7 +9,9 @@
     </nav>
     <div>
       <h3 id="welcome">Welcome to UCSF TRAINSET</h3>
-      <button type="button" class="btn btn-lg btn-outline-danger upload" id="upload" @click="fileCheck">Subject 7 Daily Step Count</button>
+      <button type="button" class="btn btn-lg btn-outline-danger upload" id="upload" @click="fileCheck">Subject 7 Full Step Count</button>
+      <button type="button" class="btn btn-lg btn-outline-danger upload" id="upload" @click="fileCheckMonth">Subject 7 2015-07 Step Count</button>
+      <button type="button" class="btn btn-lg btn-outline-danger upload" id="upload" @click="fileCheckDay">Subject 7 2015-07-20 Step Count</button>
 <!--       <input type="file" id="upload-file" ref="fileInput" class="fileCheck" @change="fileCheck"> -->
       <!-- <a id="sampleCSV" href="/static/trainset7.csv" download>sample CSV</a> -->
     </div>
@@ -53,8 +55,20 @@ export default {
         this.$nextTick(function() {this.upload()});
       }
     },
-    async loadSubject7File() {
+    async loadSubject7Full () {
       let url = "https://ucsf.box.com/shared/static/7bnsdyjbypbjsk9ado1jhf63iez1ao6o.csv";
+      var r;
+      let blob = await fetch(url).then(r => r.blob());
+      return Promise.resolve(blob)
+    },
+    async loadSubject7_2015_07 () {
+      let url = "https://berkeley.box.com/shared/static/g2ssgb6mhp3z9lx6fe2a5rt0l4sucza2.csv";
+      var r;
+      let blob = await fetch(url).then(r => r.blob());
+      return Promise.resolve(blob)
+    },
+    async loadSubject7_2015_07_20 () {
+      let url = "https://berkeley.box.com/shared/static/4cr9ewybnqoh7cznxpgxdlus7l8unrrd.csv";
       var r;
       let blob = await fetch(url).then(r => r.blob());
       return Promise.resolve(blob)
@@ -67,7 +81,165 @@ export default {
         this.error();
       }
 
-      var blob = await this.loadSubject7File().then(value => blob = value);
+      var blob = await this.loadSubject7Full().then(value => blob = value);
+      var fileInput = blob,fileText;
+      var filename;
+      var id = 0;
+      var reader = new FileReader();
+      var timestamps = [];
+      var values = [];
+      var labels = [];
+      var plotDict = [];
+      var headerStr;
+      reader.readAsBinaryString(fileInput);
+      reader.onloadend = () => {
+        fileText = $.csv.toArrays(reader.result);
+        headerStr = fileText[0].toString();
+        for (var i = 1; i < fileText.length ; i++) {
+          if (i === 1) {
+            filename = fileText[i][0];
+          }
+          if (fileText[i].length === 4 
+            && fileText[i][1].match(/((\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})(.(\d{3}))?(([+-](\d{2})\:?(\d{2}))|Z))$/)
+            && fileText[i][2].match(/-?\d+(.\d+)?$/)
+            && fileText[i][3].match(/1|0$/)
+            && fileText[i][0].includes(filename)) {
+            var date;
+            var isMatch = /([+-](\d{2})\:?(\d{2}))$/.exec(fileText[i][1]);
+            if (isMatch != null && /^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+              var safariDate = fileText[i][1].replace(isMatch[0], "");
+              date = strftime('%Y-%m-%d %H:%M:%S', new Date(safariDate)) + isMatch[0];
+            } else {
+              date = strftime('%Y-%m-%d %H:%M:%S%z', new Date(fileText[i][1]));
+            }  
+            timestamps.push(date.toString());
+            values.push(fileText[i][2]);
+            labels.push(Number(fileText[i][3]));
+            plotDict.push({
+              'id': id.toString(),
+              'val': Number(fileText[i][2]).toString(),
+              'time': date.toString(),
+              'selected': Number(fileText[i][3]).toString()
+            });
+            id++;
+          } else {
+            if (!(fileText[i].length === 4)) {
+              console.log('line parse error');
+            } else if (!fileText[i][2].match(/-?\d+(.\d+)?$/)) {
+              console.log('val parse error');
+            } else if (!fileText[i][3].match(/1|0$/)) {
+              console.log('selected parse error');
+            } else if (!fileText[i][0].match(filename)) {
+              console.log('filename parse error');
+            } else {
+              console.log('date parse error');
+            }
+            this.error();
+            break;
+          }
+        }
+        var minMax = [Math.max.apply(Math, values), Math.min.apply(Math, values)];
+        minMax[0] = minMax[0] + ((minMax[0] - minMax[1]) * 0.05);
+        minMax[1] = minMax[1] - ((minMax[0] - minMax[1]) * 0.05);
+        var plotData = [timestamps, values, labels];
+
+        this.$router.push({
+          name: 'labeler',
+          params: {
+            csvData: plotDict,
+            minMax: minMax,
+            filename: filename,
+            headerStr: headerStr,
+            isValid: true
+          }
+        });
+      }
+    },
+    async fileCheckMonth () {
+      window.onerror = (errorMsg, url, lineNumber) => {
+        this.error();
+      }
+
+      var blob = await this.loadSubject7_2015_07().then(value => blob = value);
+      var fileInput = blob,fileText;
+      var filename;
+      var id = 0;
+      var reader = new FileReader();
+      var timestamps = [];
+      var values = [];
+      var labels = [];
+      var plotDict = [];
+      var headerStr;
+      reader.readAsBinaryString(fileInput);
+      reader.onloadend = () => {
+        fileText = $.csv.toArrays(reader.result);
+        headerStr = fileText[0].toString();
+        for (var i = 1; i < fileText.length ; i++) {
+          if (i === 1) {
+            filename = fileText[i][0];
+          }
+          if (fileText[i].length === 4 
+            && fileText[i][1].match(/((\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})(.(\d{3}))?(([+-](\d{2})\:?(\d{2}))|Z))$/)
+            && fileText[i][2].match(/-?\d+(.\d+)?$/)
+            && fileText[i][3].match(/1|0$/)
+            && fileText[i][0].includes(filename)) {
+            var date;
+            var isMatch = /([+-](\d{2})\:?(\d{2}))$/.exec(fileText[i][1]);
+            if (isMatch != null && /^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+              var safariDate = fileText[i][1].replace(isMatch[0], "");
+              date = strftime('%Y-%m-%d %H:%M:%S', new Date(safariDate)) + isMatch[0];
+            } else {
+              date = strftime('%Y-%m-%d %H:%M:%S%z', new Date(fileText[i][1]));
+            }  
+            timestamps.push(date.toString());
+            values.push(fileText[i][2]);
+            labels.push(Number(fileText[i][3]));
+            plotDict.push({
+              'id': id.toString(),
+              'val': Number(fileText[i][2]).toString(),
+              'time': date.toString(),
+              'selected': Number(fileText[i][3]).toString()
+            });
+            id++;
+          } else {
+            if (!(fileText[i].length === 4)) {
+              console.log('line parse error');
+            } else if (!fileText[i][2].match(/-?\d+(.\d+)?$/)) {
+              console.log('val parse error');
+            } else if (!fileText[i][3].match(/1|0$/)) {
+              console.log('selected parse error');
+            } else if (!fileText[i][0].match(filename)) {
+              console.log('filename parse error');
+            } else {
+              console.log('date parse error');
+            }
+            this.error();
+            break;
+          }
+        }
+        var minMax = [Math.max.apply(Math, values), Math.min.apply(Math, values)];
+        minMax[0] = minMax[0] + ((minMax[0] - minMax[1]) * 0.05);
+        minMax[1] = minMax[1] - ((minMax[0] - minMax[1]) * 0.05);
+        var plotData = [timestamps, values, labels];
+
+        this.$router.push({
+          name: 'labeler',
+          params: {
+            csvData: plotDict,
+            minMax: minMax,
+            filename: filename,
+            headerStr: headerStr,
+            isValid: true
+          }
+        });
+      }
+    },
+    async fileCheckDay () {
+      window.onerror = (errorMsg, url, lineNumber) => {
+        this.error();
+      }
+
+      var blob = await this.loadSubject7_2015_07_20().then(value => blob = value);
       var fileInput = blob,fileText;
       var filename;
       var id = 0;
