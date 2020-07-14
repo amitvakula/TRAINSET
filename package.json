@@ -16,6 +16,7 @@
     "crossfilter": "^1.3.12",
     "d3": "^5.9.1",
     "d3fc-sample": "^3.0.5",
+    "dataframe-js": "^1.4.3",
     "dc": "^2.2.2",
     "expose-loader": "^0.7.5",
     "express": "^4.16.4",

@@ -23,6 +23,9 @@
     <div id="maindiv"></div>
     <div id="rangeContext"></div>
 
+ 
+
+
     <div id='legend' class='container'>
       <div class='row'>
         <div class="col">
@@ -53,6 +56,13 @@
       <button type="button" class="btn btn-light clearbtn" id="cancel" @click="cancel()">Cancel</button>
       <button type="button" class="btn btn-light clearbtn" id="ok">Ok</button>
     </div>
+     <div id="labelSelector">
+      <select style="width: 280px" id="Mobility" name="Mobility" selectedIndex=1>
+        <option value=1 selected="selected"> Low </option>
+        <option value=2 >Moderate</option>
+        <option value=3> High</option>
+      </select>
+    </div> 
     <div id="exportComplete" style="display: none;">
       <h5 class="failInfo">Export complete</h5>
       <hr>
@@ -122,6 +132,7 @@ export default {
         $('#maindiv').css("opacity", "1");
       }
     },
+
   mounted() {
       if (this.isValid) {
         window.headerStr = this.headerStr;
@@ -209,6 +220,7 @@ function labeller () {
   //main window
   var main = svg.append("g")
   .attr("class", "main")
+  .attr("labelState", 1)
   .attr("transform", "translate(" + main_margin.left + "," + main_margin.top + ")");
 
   // smaller context window
@@ -439,9 +451,29 @@ function labeller () {
     .attr("fill-opacity", "0.7")
     .on("click", function(point){
           //allow clicking on single points
-          point.selected=1-point.selected;
+          console.log("point was clicked, trying to update value");
+          var e = document.getElementById("Mobility");
+          var labelState = e.options[e.selectedIndex].value;
+          console.log("prop label state is " + labelState);
+          
+          if (point.selected != labelState) { 
+                point.selected=labelState;
+          } else {  // this means point.selected == labelState
+              point.selected=0;
+          }
+
+          if (point.selected == labelState  && labelState == 1) {
+            this.style.fill = "#FFa200" // red for low intensity
+          } else if (point.selected == labelState && labelState == 2) {
+            this.style.fill = "#04FF00" // organze for medium intensity
+          } else if(point.selected == labelState && labelState ==3){
+            this.style.fill ="#FF2200"
+          }
+
           update_selection();
         })
+    
+
     .on("mouseover", function(point) {
         timer = setTimeout(function() {
           update_hoverbox(point.time, point.val);
