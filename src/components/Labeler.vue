@@ -451,11 +451,10 @@ function labeller () {
     .attr("fill-opacity", "0.7")
     .on("click", function(point){
           //allow clicking on single points
+          console.log(point)
           console.log("point was clicked, trying to update value");
           var e = document.getElementById("Mobility");
           var labelState = e.options[e.selectedIndex].value;
-          console.log("prop label state is " + labelState);
-          
           if (point.selected != labelState) { 
                 point.selected=labelState;
           } else {  // this means point.selected == labelState
@@ -463,11 +462,11 @@ function labeller () {
           }
 
           if (point.selected == labelState  && labelState == 1) {
-            this.style.fill = "#FFa200" // red for low intensity
+            this.style.fill = "#FFa200" // orange for low intensity
           } else if (point.selected == labelState && labelState == 2) {
-            this.style.fill = "#04FF00" // organze for medium intensity
+            this.style.fill = "#04FF00" // green for medium intensity
           } else if(point.selected == labelState && labelState ==3){
-            this.style.fill ="#FF2200"
+            this.style.fill ="#FF0800"// red for high intensity
           }
 
           update_selection();
@@ -637,28 +636,36 @@ function labeller () {
   
   // Find the nodes within the specified rectangle.
   function search(quadtree, brush_xmin, brush_ymin, brush_xmax, brush_ymax) {
+    // labelState here is a function-scoped variable
     quadtree.visit(function(node, quad_xmin, quad_ymin, quad_xmax, quad_ymax) {
       if (!node.length) {
         do {
+          
           var d = node.data;
+          var e = document.getElementById("Mobility");
+          var labelState = e.options[e.selectedIndex].value;
           // invert selection for points in brush
           if (!shiftKey) {
-            d.selected = ((d.time >= brush_xmin) && (d.time <= brush_xmax) && (d.val >= brush_ymin) && (d.val <= brush_ymax)) ? 1 : d.selected;
+            d.selected = ((d.time >= brush_xmin) && (d.time <= brush_xmax) && (d.val >= brush_ymin) && (d.val <= brush_ymax)) ? labelState : d.selected;
+            console.log(node.data.selected)
+
           } else {
             d.selected = ((d.time >= brush_xmin) && (d.time <= brush_xmax) && (d.val >= brush_ymin) && (d.val <= brush_ymax)) ? 0 : d.selected;
           }
-          
+
         } while (node = node.next);
       }
-      
       // return true if current quadtree rectangle intersects with brush (looks deeper in tree if true)
       return quad_xmin >= brush_xmax || quad_ymin >= brush_ymax || quad_xmax < brush_xmin || quad_ymax < brush_ymin;
+      
     });
   }
 
+
+
   function update_selection(){
-    main.selectAll(".point").classed("selected", function(d) { return d.selected; });
-    context.selectAll(".point").classed("selected", function(d) { return d.selected; });
+    main.selectAll(".point").classed("selected", function(d) {return d.selected;});
+    context.selectAll(".point").classed("selected", function(d) {return d.selected;});
   }
 
   function brushed_main(){
@@ -666,7 +673,6 @@ function labeller () {
     if (extent === null) {
       return;
     }
-    
     // convert pixels defining brush into actual time, value scales
     var xmin = main_xscale.invert(extent[0][0])
     var xmax = main_xscale.invert(extent[1][0])
@@ -674,11 +680,34 @@ function labeller () {
     var ymin = main_yscale.invert(extent[1][1])
     
     
-    
     search(quadtree, xmin, ymin, xmax, ymax);
+    update_selection();
+
+    main.selectAll(".point.selected")
+  .filter(function(d,i) {
+    return d.selected == 1 ;// select the point of labelState 1 and change its fill color
+  })
+  .style('fill', "#FFa200");// orange for low intensity
+
+    update_selection();
+    main.selectAll(".point.selected")
+  .filter(function(d,i) {
+    return d.selected == 2 ; // select the point of labelState 2 and change its fill color
+  })
+  .style('fill', "#04FF00");// green for medium intensity
+
+    update_selection();
+    main.selectAll(".point.selected")
+  .filter(function(d,i) {
+    return d.selected == 3 ;// select the point of labelState 3 and change its fill color
+  })
+  .style('fill', "#FF2200");// red for high intensity
+
     update_selection();
     mainBrush.call(main_brush.move, null);
   }
+    
+
 
   $('#clear').click(function() {
     $('#clearOk').show();
@@ -698,6 +727,7 @@ function labeller () {
       }
       return false;
     });
+ 
     update_selection();
   });
 
@@ -811,9 +841,9 @@ svg {
 }
 
 .point.selected {
-  fill: #FF5500;
+  fill: #FFa200;
   fill-opacity: 0.75;
-  stroke: #FF5500;
+  stroke: #FF5502;
   clip-path: url(#clip);
 }
 
