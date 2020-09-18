@@ -22,10 +22,6 @@
     <div id="hoverbox" class="card"><div class="card-subtitle">Time: {{ time }}</div><div class="card-subtitle">Value: {{ val }}</div></div>
     <div id="maindiv"></div>
     <div id="rangeContext"></div>
-
- 
-
-
     <div id='legend' class='container'>
       <div class='row'>
         <div class="col">
@@ -56,6 +52,21 @@
       <button type="button" class="btn btn-light clearbtn" id="cancel" @click="cancel()">Cancel</button>
       <button type="button" class="btn btn-light clearbtn" id="ok">Ok</button>
     </div>
+    <form>
+    <table>
+        <tr>
+            <td><label for="tresh1">threshold 1：</label></td>
+            <td><input type="number" id="tresh1" name="threshold 1" /></td>
+        </tr>
+        <tr>
+            <td><label for="tresh2">threshold 2：</label></td>
+            <td><input type="number" id="tresh2" name="threshold 2" /></td>
+        </tr>
+    </table>
+    </form> 
+    <button type="button"
+    onclick="changefunc()">
+    Click to change thresholds</button>
      <div id="labelSelector">
       <select style="width: 280px" id="Mobility" name="Mobility" selectedIndex=1>
         <option value=1 selected="selected"> Low </option>
@@ -158,10 +169,14 @@ export default {
 }
 
 function labeller () {
-
+ 
   // main -- main plot
   // context -- smaller context plot for zooming, scrolling
-
+  function changefunc(){
+  var a = document.getElementsByClassName('point').style.fill;
+  a = "red"; 
+  console.log(a)
+  }
   //margins
   var main_margin = {top: 10, right: 10, bottom: 100, left: 40},
   context_margin = {top: 430, right: 40, bottom: 20, left: 40},
@@ -468,10 +483,8 @@ function labeller () {
           } else if(point.selected == labelState && labelState ==3){
             this.style.fill ="#FF0800"// red for high intensity
           }
-
           update_selection();
         })
-    
 
     .on("mouseover", function(point) {
         timer = setTimeout(function() {
@@ -707,7 +720,6 @@ function labeller () {
     mainBrush.call(main_brush.move, null);
   }
     
-
 
   $('#clear').click(function() {
     $('#clearOk').show();
