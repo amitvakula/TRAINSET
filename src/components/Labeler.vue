@@ -56,17 +56,18 @@
     <table>
         <tr>
             <td><label for="tresh1">threshold 1：</label></td>
-            <td><input type="number" id="tresh1" name="threshold 1" /></td>
+            <td><input type="number" id="thresh1" name="threshold 1" /></td>
         </tr>
         <tr>
             <td><label for="tresh2">threshold 2：</label></td>
-            <td><input type="number" id="tresh2" name="threshold 2" /></td>
+            <td><input type="number" id="thresh2" name="threshold 2" /></td>
         </tr>
     </table>
     </form> 
-    <button type="button"
-    onclick="changefunc()">
+
+    <button type="button" @click="color_threshold()">
     Click to change thresholds</button>
+
      <div id="labelSelector">
       <select style="width: 280px" id="Mobility" name="Mobility" selectedIndex=1>
         <option value=1 selected="selected"> Low </option>
@@ -106,6 +107,31 @@ export default {
     };
   },
     methods: {
+      color_threshold() {
+        var main =d3.select("#maindiv").selectAll("svg");
+        var th1=document.getElementById("thresh1").value;
+        var th2=document.getElementById("thresh2").value;
+        console.log(th1)
+        main.selectAll(".point")
+          .filter(function(d,i) {
+            return d.val == th1 || d.val < th1;// select the point of labelState 1 and change its fill color
+          })
+          .style('fill', "#FFa200");// orange for low intensity
+
+            main.selectAll(".point")
+          .filter(function(d,i) {
+            return d.val >th1 && d.val < th2 || d.val == th2; // select the point of labelState 2 and change its fill color
+          })
+          .style('fill', "#04FF00");// green for medium intensity
+
+            
+            main.selectAll(".point")
+          .filter(function(d,i) {
+            return d.val > th2 ;// select the point of labelState 3 and change its fill color
+          })
+          .style('fill', "#FF2200");// red for high intensity
+
+      },
       goHome() {
         this.$router.push({ name: 'home', params: {nextUp: false} });
       },
@@ -172,11 +198,6 @@ function labeller () {
  
   // main -- main plot
   // context -- smaller context plot for zooming, scrolling
-  function changefunc(){
-  var a = document.getElementsByClassName('point').style.fill;
-  a = "red"; 
-  console.log(a)
-  }
   //margins
   var main_margin = {top: 10, right: 10, bottom: 100, left: 40},
   context_margin = {top: 430, right: 40, bottom: 20, left: 40},
@@ -465,8 +486,10 @@ function labeller () {
     .moveToFront()
     .attr("fill-opacity", "0.7")
     .on("click", function(point){
+
+      var test = main.selectAll(".point")
+      console.log(test)
           //allow clicking on single points
-          console.log(point)
           console.log("point was clicked, trying to update value");
           var e = document.getElementById("Mobility");
           var labelState = e.options[e.selectedIndex].value;
@@ -497,6 +520,8 @@ function labeller () {
       });
 
   }
+
+
 
   function update_hoverbox(time, val) {
     if (time === '' && val === '') {
@@ -798,6 +823,9 @@ function labeller () {
     brushSelector = $('.dropdown-item.active').html();
   });
 
+}
+function color_threshold(){
+  console.log("get the color threshold fucniton")
 }
 </script>
 
