@@ -67,6 +67,8 @@
 
     <button type="button" @click="color_threshold()">
     Click to change thresholds</button>
+     <button type="button" @click="peak_detect_seg()">
+    Click to show segmentation</button>
 
      <div id="labelSelector">
       <select style="width: 280px" id="Mobility" name="Mobility" selectedIndex=1>
@@ -111,7 +113,7 @@ export default {
         var main =d3.select("#maindiv").selectAll("svg");
         var th1=document.getElementById("thresh1").value;
         var th2=document.getElementById("thresh2").value;
-        console.log(th1)
+        // got a question here, isn't the point defined later?
         main.selectAll(".point")
           .filter(function(d,i) {
             return d.val == th1 || d.val < th1;// select the point of labelState 1 and change its fill color
@@ -130,6 +132,29 @@ export default {
             return d.val > th2 ;// select the point of labelState 3 and change its fill color
           })
           .style('fill', "#FF2200");// red for high intensity
+
+      },
+      color_threshold() {
+        //another way to change color based on d.val
+        var main =d3.select("#maindiv").selectAll("svg");
+        var th2=document.getElementById("thresh2").value;
+         
+
+       // var parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S%Z");
+
+        // access data with segmentation label
+        // create a new variable seg
+        // seg has value 0 and 1, write a filter to select "x scale" whose seg value is 1
+        // how does the backgoundcolor correspond with x scale?
+
+        //d3.select.All(" ")
+          //.filter(function(d,i) {
+           // return d.seg == 1;
+          //})
+          //.style('fill', "#FF2200");
+            
+
+
 
       },
       goHome() {
